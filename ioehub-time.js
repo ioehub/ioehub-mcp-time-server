@@ -13,12 +13,33 @@ const readline = require('readline');
 const fs = require('fs');
 const path = require('path');
 
-// Create log directory if it doesn't exist
-const logDir = path.join(__dirname, 'logs');
+// Get current directory information to help with debugging
+const currentDir = process.cwd();
+const scriptPath = __filename;
+const scriptDir = path.dirname(scriptPath);
+
+// Define a basic console logging function to use before we set up the file logger
+const consoleLog = (level, message) => {
+  const timestamp = new Date().toISOString();
+  console.error(`${timestamp} [${level}] ${message}`);
+};
+
+// Log initial startup information
+consoleLog('info', `IoEHub MCP Time Server starting...`);
+consoleLog('info', `Current directory: ${currentDir}`);
+consoleLog('info', `Script path: ${scriptPath}`);
+consoleLog('info', `Script directory: ${scriptDir}`);
+
+// Create log directory if it doesn't exist - ensure we use the script's directory, not cwd
+const logDir = path.join(scriptDir, 'logs');
+consoleLog('info', `Using log directory: ${logDir}`);
+
 if (!fs.existsSync(logDir)) {
   try {
     fs.mkdirSync(logDir);
+    consoleLog('info', `Created log directory at: ${logDir}`);
   } catch (err) {
+    consoleLog('error', `Failed to create log directory: ${err.message}`);
     // Ignore error, will log to stderr instead
   }
 }
@@ -29,7 +50,9 @@ let logStream;
 
 try {
   logStream = fs.createWriteStream(logFile, { flags: 'a' });
+  consoleLog('info', `Logging to file: ${logFile}`);
 } catch (err) {
+  consoleLog('error', `Failed to create log file: ${err.message}`);
   // Will log to stderr only
 }
 
@@ -43,7 +66,11 @@ const log = (level, message) => {
   
   // Also log to file if available
   if (logStream && logStream.writable) {
-    logStream.write(logMessage + '\n');
+    try {
+      logStream.write(logMessage + '\n');
+    } catch (err) {
+      console.error(`Failed to write to log file: ${err.message}`);
+    }
   }
 };
 
@@ -68,6 +95,8 @@ function startServer() {
   log('info', `Process ID: ${process.pid}`);
   log('info', `Node.js version: ${process.version}`);
   log('info', `Platform: ${process.platform}`);
+  log('info', `Current directory: ${currentDir}`);
+  log('info', `Script path: ${scriptPath}`);
   log('info', '======================================================');
   
   registerExitHandlers();
@@ -176,13 +205,18 @@ function ensureProcessStaysAlive() {
     if (isRunning) {
       // Do nothing, just keep the event loop busy
     }
-  }, 10000);
+  }, 5000); // More frequent check to ensure process stays alive
   
   // 4. Create a promise that never resolves to keep the process alive
   new Promise(() => {
     // This promise intentionally never resolves
     // This keeps the Node.js event loop active
   });
+  
+  // 5. Create an additional interval to ensure we have enough activity
+  setInterval(() => {
+    log('debug', 'Keep-alive check running');
+  }, 30000);
 }
 
 // Start heartbeat interval
@@ -245,8 +279,8 @@ function handleInitialize(id, params = {}) {
   log('info', `Initializing with protocol: ${params.protocolVersion || 'unknown'}`);
   log('info', `Client info: ${JSON.stringify(params.clientInfo || {})}`);
   
-  // Send capabilities response
-  sendRpcResponse(id, {
+  // Send capabilities response immediately to not keep the client waiting
+  sendJsonRpcResponse(id, {
     serverInfo: {
       name: 'IoEHubMcpTimeServer',
       version: '1.0.0'
@@ -255,6 +289,28 @@ function handleInitialize(id, params = {}) {
       timeProvider: true
     }
   });
+  
+  // Ensure the process stays alive after initialization
+  setTimeout(() => {
+    log('info', 'Server remains alive after initialization');
+  }, 1000);
+}
+
+// Send the response as pure JSON-RPC, avoiding any accidental console output
+function sendJsonRpcResponse(id, result) {
+  const response = {
+    jsonrpc: '2.0',
+    id,
+    result
+  };
+  
+  log('debug', `Sending response: ${JSON.stringify(response)}`);
+  
+  try {
+    process.stdout.write(JSON.stringify(response) + '\n');
+  } catch (err) {
+    log('error', `Failed to send response: ${err.message}`);
+  }
 }
 
 // Handle time request
@@ -265,7 +321,7 @@ function handleGetTime(id) {
   
   log('debug', `Providing time: ${date.toISOString()}`);
   
-  sendRpcResponse(id, {
+  sendJsonRpcResponse(id, {
     unix_time: timestamp,
     unix_ms: now,
     human_readable: date.toISOString(),
@@ -281,24 +337,12 @@ function handleShutdown(id) {
   log('info', 'Shutdown requested, but server will remain running');
   
   // Tell the client we're shutting down, but actually stay alive
-  sendRpcResponse(id, null);
+  sendJsonRpcResponse(id, null);
 }
 
 // Send JSON-RPC response
 function sendRpcResponse(id, result) {
-  const response = {
-    jsonrpc: '2.0',
-    id,
-    result
-  };
-  
-  log('debug', `Sending response: ${JSON.stringify(response)}`);
-  
-  try {
-    console.log(JSON.stringify(response));
-  } catch (err) {
-    log('error', `Failed to send response: ${err.message}`);
-  }
+  sendJsonRpcResponse(id, result);
 }
 
 // Send JSON-RPC error
@@ -319,7 +363,7 @@ function sendRpcError(id, code, message, data = undefined) {
   log('debug', `Sending error: ${JSON.stringify(response)}`);
   
   try {
-    console.log(JSON.stringify(response));
+    process.stdout.write(JSON.stringify(response) + '\n');
   } catch (err) {
     log('error', `Failed to send error response: ${err.message}`);
   }
@@ -327,6 +371,23 @@ function sendRpcError(id, code, message, data = undefined) {
 
 // Start the server
 startServer();
+
+// Prevent standard output from closing
+process.stdout.on('error', (err) => {
+  log('error', `stdout error: ${err.message}`);
+  // Don't let this crash the app
+});
+
+// Prevent standard input from closing
+process.stdin.on('error', (err) => {
+  log('error', `stdin error: ${err.message}`);
+  // Don't let this crash the app
+});
+
+// Force the process to stay alive with a recurring timer
+setInterval(() => {
+  log('debug', 'Process keep-alive timer');
+}, 20000);
 
 // Write a marker to know if the process exited prematurely
 process.on('beforeExit', () => {

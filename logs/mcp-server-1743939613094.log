@@ -1,0 +1,14 @@
+2025-04-06T11:40:13.127Z [info] ======================================================
+2025-04-06T11:40:13.128Z [info] IoEHub MCP Time Server starting...
+2025-04-06T11:40:13.128Z [info] Process ID: 62184
+2025-04-06T11:40:13.130Z [info] Node.js version: v20.10.0
+2025-04-06T11:40:13.130Z [info] Platform: win32
+2025-04-06T11:40:13.137Z [info] Current directory: C:\Users\a\AppData\Local\AnthropicClaude\app-0.9.1
+2025-04-06T11:40:13.140Z [info] Script path: C:\vang\project\2025\ioehub-mcp-time-server\ioehub-time.js
+2025-04-06T11:40:13.141Z [info] ======================================================
+2025-04-06T11:40:13.143Z [info] Starting server heartbeat
+2025-04-06T11:40:13.146Z [info] IoEHub MCP Time Server ready for MCP communication
+2025-04-06T11:40:13.209Z [debug] Received: {"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"claude-ai","version":"0.1.0"}},"jsonrpc":"2.0","id":0}
+2025-04-06T11:40:13.213Z [info] Initializing with protocol: 2024-11-05
+2025-04-06T11:40:13.214Z [info] Client info: {"name":"claude-ai","version":"0.1.0"}
+2025-04-06T11:40:13.214Z [debug] Sending response: {"jsonrpc":"2.0","id":0,"result":{"serverInfo":{"name":"IoEHubMcpTimeServer","version":"1.0.0"},"capabilities":{"timeProvider":true}}}
