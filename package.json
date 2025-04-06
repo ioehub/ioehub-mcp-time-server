@@ -2,13 +2,13 @@
   "name": "ioehub-mcp-time-server",
   "version": "1.0.0",
   "description": "IoEHub MCP Time Server providing current Unix timestamp",
-  "main": "mcp-time-server.js",
+  "main": "ioehub-time.js",
   "bin": {
-    "IoEHubMcpTimeServer": "./mcp-time-server.js"
+    "IoEHubMcpTimeServer": "./ioehub-time.js"
   },
   "scripts": {
-    "start": "node mcp-time-server.js",
-    "dev": "nodemon mcp-time-server.js",
+    "start": "node ioehub-time.js",
+    "dev": "nodemon ioehub-time.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
