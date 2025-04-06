@@ -11,24 +11,6 @@ app.use(cors());
 // Middleware to parse JSON requests
 app.use(express.json());
 
-// Optional: API Key Authentication (Commented out by default)
-// Uncomment and set API_KEY environment variable to enable
-/*
-app.use((req, res, next) => {
-  // Skip auth for the root path (health check)
-  if (req.path === '/') {
-    return next();
-  }
-  
-  const apiKey = req.headers['x-api-key'];
-  if (apiKey && apiKey === process.env.API_KEY) {
-    next();
-  } else {
-    res.status(401).json({ error: 'Unauthorized. API key required.' });
-  }
-});
-*/
-
 // Route to get current Unix timestamp
 app.get('/time', (req, res) => {
   const timestamp = Math.floor(Date.now() / 1000); // Current Unix timestamp in seconds
@@ -47,10 +29,10 @@ app.get('/time', (req, res) => {
 
 // Simple health check endpoint
 app.get('/', (req, res) => {
-  res.send('MCP Time Server is running');
+  res.send('IoEHub MCP Time Server is running');
 });
 
 // Start the server
 app.listen(PORT, () => {
-  console.log(`MCP Time Server listening on port ${PORT}`);
+  console.log(`IoEHub MCP Time Server listening on port ${PORT}`);
 }); 

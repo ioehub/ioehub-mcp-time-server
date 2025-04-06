@@ -1,10 +1,10 @@
 {
   "name": "ioehub-mcp-time-server",
   "version": "1.0.0",
-  "description": "MCP Time Server providing current Unix timestamp",
+  "description": "IoEHub MCP Time Server providing current Unix timestamp",
   "main": "index.js",
   "bin": {
-    "mcp-time-server": "./index.js"
+    "IoEHubMcpTimeServer": "./index.js"
   },
   "scripts": {
     "start": "node index.js",
