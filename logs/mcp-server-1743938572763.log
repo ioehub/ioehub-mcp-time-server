@@ -1,0 +1,46 @@
+2025-04-06T11:22:52.778Z [info] ======================================================
+2025-04-06T11:22:52.789Z [info] IoEHub MCP Time Server starting...
+2025-04-06T11:22:52.790Z [info] Process ID: 63516
+2025-04-06T11:22:52.790Z [info] Node.js version: v20.10.0
+2025-04-06T11:22:52.791Z [info] Platform: win32
+2025-04-06T11:22:52.791Z [info] ======================================================
+2025-04-06T11:22:52.792Z [info] Starting server heartbeat
+2025-04-06T11:22:52.793Z [info] IoEHub MCP Time Server ready for MCP communication
+2025-04-06T11:22:53.806Z [debug] Initial timeout completed
+2025-04-06T11:23:02.796Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:23:12.798Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:23:22.244Z [error] Failed to parse message: Unexpected token '^', "^C" is not valid JSON
+2025-04-06T11:23:22.259Z [debug] Sending error: {"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error","data":"Unexpected token '^', \"^C\" is not valid JSON"}}
+2025-04-06T11:23:22.274Z [error] Failed to parse message: Unexpected token '^', "^C" is not valid JSON
+2025-04-06T11:23:22.276Z [debug] Sending error: {"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error","data":"Unexpected token '^', \"^C\u0003\" is not valid JSON"}}
+2025-04-06T11:23:22.277Z [error] Failed to parse message: Unexpected token '^', "^C" is not valid JSON
+2025-04-06T11:23:22.278Z [debug] Sending error: {"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error","data":"Unexpected token '^', \"^C\u0003\" is not valid JSON"}}
+2025-04-06T11:23:22.279Z [error] Failed to parse message: Unexpected token '^', "^C" is not valid JSON
+2025-04-06T11:23:22.281Z [debug] Sending error: {"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error","data":"Unexpected token '^', \"^C\u0003\" is not valid JSON"}}
+2025-04-06T11:23:22.291Z [error] Failed to parse message: Unexpected token '^', "^C" is not valid JSON
+2025-04-06T11:23:22.292Z [debug] Sending error: {"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error","data":"Unexpected token '^', \"^C\u0003\" is not valid JSON"}}
+2025-04-06T11:23:22.809Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:23:32.813Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:23:42.829Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:23:52.832Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:24:02.847Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:24:12.859Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:24:22.874Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:24:32.880Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:24:42.892Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:24:52.900Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:25:02.932Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:25:12.943Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:25:22.944Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:25:32.952Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:25:42.996Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:25:53.114Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:26:03.130Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:26:13.142Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:26:23.156Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:26:33.157Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:26:43.161Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:26:53.164Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:27:03.166Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:27:13.168Z [debug] IoEHub MCP Time Server is still running
+2025-04-06T11:27:23.182Z [debug] IoEHub MCP Time Server is still running

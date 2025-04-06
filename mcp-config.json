@@ -1,9 +1,10 @@
 {
   "mcpServers": {
     "IoEHubMcpTimeServer": {
-      "command": "node",
+      "command": "cmd",
       "args": [
-        "C:\\vang\\project\\2025\\ioehub-mcp-time-server\\ioehub-time.js"
+        "/c",
+        "C:\\vang\\project\\2025\\ioehub-mcp-time-server\\start-mcp-server.bat"
       ]
     }
   }
