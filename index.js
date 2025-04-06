@@ -16,6 +16,9 @@ const rl = readline.createInterface({
 // but doesn't interfere with the JSON-RPC communication
 console.error(`[info] Initializing IoEHub MCP Time Server...`);
 
+// Keep the process alive
+let keepAliveInterval;
+
 // Listen for incoming messages on stdin
 rl.on('line', (line) => {
   try {
@@ -31,6 +34,13 @@ rl.on('line', (line) => {
     // Send error response
     sendJsonRpcError(null, -32700, "Parse error");
   }
+});
+
+// Listen for stdin closing
+rl.on('close', () => {
+  console.error(`[info] Input stream closed, shutting down...`);
+  clearInterval(keepAliveInterval);
+  process.exit(0);
 });
 
 // Handle different message types
@@ -68,6 +78,17 @@ function handleInitialize(message) {
       timeProvider: true
     }
   });
+  
+  // Start the keep-alive timer after initialization
+  // This ensures the Node.js process doesn't exit
+  if (!keepAliveInterval) {
+    keepAliveInterval = setInterval(() => {
+      console.error(`[debug] MCP time server is still running...`);
+    }, 60000); // Log every minute for debugging
+    
+    // Prevent the interval from keeping the process alive if everything else ends
+    keepAliveInterval.unref();
+  }
 }
 
 // Handle get time request
@@ -90,6 +111,11 @@ function handleGetTime(id) {
 function handleShutdown(id) {
   console.error(`[info] Shutting down...`);
   sendJsonRpcResponse(id, null);
+  
+  // Clean up and exit
+  if (keepAliveInterval) {
+    clearInterval(keepAliveInterval);
+  }
   
   // Allow time for the response to be sent
   setTimeout(() => {
@@ -128,12 +154,17 @@ function sendJsonRpcError(id, code, message, data) {
 // Handle process termination
 process.on('SIGINT', () => {
   console.error(`[info] Received SIGINT, shutting down...`);
+  clearInterval(keepAliveInterval);
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
   console.error(`[info] Received SIGTERM, shutting down...`);
+  clearInterval(keepAliveInterval);
   process.exit(0);
 });
+
+// This keeps the Node.js process from exiting
+process.stdin.resume();
 
 console.error(`[info] IoEHub MCP Time Server ready to accept connections`); 
