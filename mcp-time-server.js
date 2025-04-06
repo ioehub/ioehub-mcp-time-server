@@ -68,6 +68,10 @@ function handleInitialize(message) {
   const { id, params } = message;
   console.error(`[info] Initializing with protocol version: ${params.protocolVersion}`);
   
+  // Start the keep-alive timer before sending response
+  // This ensures the Node.js process doesn't exit
+  startKeepAlive();
+  
   // Send capabilities response
   sendJsonRpcResponse(id, {
     serverInfo: {
@@ -78,17 +82,6 @@ function handleInitialize(message) {
       timeProvider: true
     }
   });
-  
-  // Start the keep-alive timer after initialization
-  // This ensures the Node.js process doesn't exit
-  if (!keepAliveInterval) {
-    keepAliveInterval = setInterval(() => {
-      console.error(`[debug] MCP time server is still running...`);
-    }, 60000); // Log every minute for debugging
-    
-    // Prevent the interval from keeping the process alive if everything else ends
-    keepAliveInterval.unref();
-  }
 }
 
 // Handle get time request
@@ -113,14 +106,37 @@ function handleShutdown(id) {
   sendJsonRpcResponse(id, null);
   
   // Clean up and exit
-  if (keepAliveInterval) {
-    clearInterval(keepAliveInterval);
-  }
+  stopKeepAlive();
   
   // Allow time for the response to be sent
   setTimeout(() => {
     process.exit(0);
   }, 100);
+}
+
+// Start keep-alive mechanisms
+function startKeepAlive() {
+  if (!keepAliveInterval) {
+    console.error('[info] Starting keep-alive mechanisms');
+    
+    // Send a heartbeat log every minute
+    keepAliveInterval = setInterval(() => {
+      console.error(`[debug] MCP time server is still running...`);
+    }, 60000);
+    
+    // Don't let the interval prevent the process from exiting
+    // if everything else is done
+    keepAliveInterval.unref();
+  }
+}
+
+// Stop keep-alive mechanisms
+function stopKeepAlive() {
+  if (keepAliveInterval) {
+    console.error('[info] Stopping keep-alive mechanisms');
+    clearInterval(keepAliveInterval);
+    keepAliveInterval = null;
+  }
 }
 
 // Helper for sending JSON-RPC responses
@@ -131,7 +147,7 @@ function sendJsonRpcResponse(id, result) {
     result
   };
   
-  // Write to stdout
+  // Write to stdout and flush
   console.log(JSON.stringify(response));
 }
 
@@ -147,21 +163,40 @@ function sendJsonRpcError(id, code, message, data) {
     }
   };
   
-  // Write to stdout
+  // Write to stdout and flush
   console.log(JSON.stringify(response));
 }
 
 // Handle process termination
 process.on('SIGINT', () => {
   console.error(`[info] Received SIGINT, shutting down...`);
-  clearInterval(keepAliveInterval);
+  stopKeepAlive();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
   console.error(`[info] Received SIGTERM, shutting down...`);
-  clearInterval(keepAliveInterval);
+  stopKeepAlive();
   process.exit(0);
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error(`[error] Uncaught exception: ${err.message}`);
+  console.error(err.stack);
+  // Don't exit, try to keep the server running
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error(`[error] Unhandled rejection at: ${promise}, reason: ${reason}`);
+  // Don't exit, try to keep the server running
+});
+
+// Explicitly prevent the process from exiting when stdin ends
+// This is important for keeping the MCP server alive
+process.stdin.on('end', () => {
+  console.error(`[warn] stdin ended, but keeping process alive for MCP protocol`);
 });
 
 // This keeps the Node.js process from exiting

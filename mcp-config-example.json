@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "IoEHubMcpTimeServer": {
+      "command": "node",
+      "args": [
+        "C:\\vang\\project\\2025\\ioehub-mcp-time-server\\mcp-time-server.js"
+      ]
+    }
+  }
+} 
