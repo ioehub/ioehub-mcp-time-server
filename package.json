@@ -20,11 +20,10 @@
   ],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^5.1.0"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
     "nodemon": "^3.1.9"
   }
 }
